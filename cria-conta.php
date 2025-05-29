@@ -36,18 +36,13 @@ if (isset($_POST['inserir'])){
 
 
         $usuario = new Usuarios($nome, $dataNascimento, $email, $senha);
-        // Utils::dump($usuario);
-        // die();
         $usuarioServico->inserir($usuario);   
         header("Location:login.php");
         
         exit;
 
     } catch (Throwable $erro){
-        $mensagemErro = $erro->getMessage();
-    } catch (Throwable $erro){ 
-        //Captura de erros inseperados
-        $mensagemErro = "Erro inesperado: ";
+        $mensagemErro = "Erro: " . $erro->getMessage();
         Utils::registrarErro($erro);
     }
 
@@ -61,14 +56,18 @@ if (isset($_POST['inserir'])){
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Explosão Cultural</title>
+  <meta name="description" content="Explosão Cultural - Crie sua conta para participar de eventos culturais.">
   <link rel="shortcut icon" href="images/logotipo2.png" type="image/png" sizes="64x64"> 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/estilo.css">
 </head>
-<header class="bg-ligth p-3">
+
+<body class="bg-light text-dark">
+
+<header class="bg-light p-3">
     <div class="container d-flex justify-content-between align-items-center">
       <h1 class="m-0"><a href="index.php" class="text-light text-decoration-none"><img class="logotipo" src="images/logo2.png" alt="logo tipo"></a></h1>
-      <nav class="navbar navbar-expand-lg navbar-light bg-white">
+      <nav class="navbar navbar-expand-lg navbar-light bg-ligth">
         <div class="container">
           <button class="navbar-toggler" type="button" id="menuBtn" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -87,8 +86,8 @@ if (isset($_POST['inserir'])){
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <?php foreach ($listaDeGeneros as $generos) { ?>
                     <li>
-                      <a class="dropdown-item" href="generos.php?tipo=<?= $generos['id'] ?>">
-                        <?= $generos['tipo'] ?>
+                      <a class="dropdown-item" href="generos.php?tipo=<?= htmlspecialchars($generos['id']) ?>">
+                        <?= htmlspecialchars($generos['tipo']) ?>
                       </a>
                     </li>
                   <?php } ?>
@@ -105,11 +104,10 @@ if (isset($_POST['inserir'])){
             </ul>
 
             <div class="position-relative">
-              <form autocomplete="off" class="d-flex" action="resultados.php" method="POST" onsubmit="return false" id="form-busca">
+              <form autocomplete="off" class="d-flex" action="resultados.php" method="POST" id="form-busca">
                 <input id="campo-busca" name="busca" class="form-control me-2" type="search" placeholder="Pesquise aqui" aria-label="Pesquise aqui">
               </form>
 
-              <!-- Div manipulada pelo busca.js -->
               <div id="resultados" class="mt-3 position-absolute container bg-white shadow-lg p-3 rounded"></div>
             </div>
           </div>
@@ -119,7 +117,7 @@ if (isset($_POST['inserir'])){
     <hr>
   </header>
 
-  <main class="container my-5 bg-ligth text-dark rounded p-4 shadow">
+  <main class="container my-5 bg-light text-dark rounded p-4 shadow">
   <div class="container my-5 h-100">
     <h2 class="mb-4">Login</h2>
     <p class="text-warning">Atenção: os campos <strong>Nome</strong> e <strong>E-mail</strong> são <u>obrigatórios</u>.</p>
@@ -130,7 +128,7 @@ if (isset($_POST['inserir'])){
 
         <?php if (!empty($mensagemErro)) : ?>
 			<div class="alert alert-danger text-center" role="alert">
-				<?= $mensagemErro ?>
+				<?= htmlspecialchars($mensagemErro) ?>
 			</div>
 		<?php endif; ?>
 
@@ -140,7 +138,7 @@ if (isset($_POST['inserir'])){
         </div>
         
         <div class="mb-3">
-         <label for="data_de_nascimento" class="form-label">Data de nascimento</label>
+         <label for="data_nascimento" class="form-label">Data de nascimento</label>
          <input type="date" class="form-control" name="data_nascimento" id="data_nascimento" placeholder="00/00/0000">
        </div>
 
@@ -161,7 +159,7 @@ if (isset($_POST['inserir'])){
   </main>
   </div>
 
-  <footer class="bg-ligth py-4">
+  <footer class="bg-light py-4">
     <div class="container d-flex justify-content-center align-items-center flex-column">
       <h1 class="m-0">
         <a href="index.php" class="text-light text-decoration-none">
@@ -204,9 +202,9 @@ if (isset($_POST['inserir'])){
     </p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   <script src="js/buscar.js"></script>
   <script src="js/menu.js"></script>
- 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+
 </body>
 </html>

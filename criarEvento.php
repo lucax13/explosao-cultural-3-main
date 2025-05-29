@@ -15,8 +15,6 @@ $idUsuario = $_SESSION['id'];
 
 $mensagemErro = '';
 
-
-
 $generoServico = new GeneroServico();
 
 $listaDeGeneros = $generoServico->listarTodos();
@@ -29,7 +27,6 @@ if (isset($_POST['inserir'])) {
     $classificacao = Utils::sanitizar($_POST["classificacao"] ?? '');
     $telefone = Utils::sanitizar($_POST["telefone"]);
     $descricao = Utils::sanitizar($_POST["descricao"]);
-    // $idGenero = Utils::sanitizar($_POST["genero"], "inteiro");
     $idGenero = $_POST['genero'];
 
     $cep = Utils::sanitizar($_POST["cep"]);
@@ -38,7 +35,8 @@ if (isset($_POST['inserir'])) {
     $cidade = Utils::sanitizar($_POST["cidade"]);
     $estado = Utils::sanitizar($_POST["estado"]);
 
-    $arquivoDeImagem = Utils::sanitizar($_FILES["imagem"], "arquivo");
+    // Use $_FILES diretamente, sem sanitizar para não perder dados essenciais do arquivo
+    $arquivoDeImagem = $_FILES["imagem"];
 
     try {
         Validacoes::validarGenero($idGenero);
@@ -49,21 +47,11 @@ if (isset($_POST['inserir'])) {
         $nomeDaImagem = $arquivoDeImagem["name"];
         $classificacaoEnum = TipoClassificacao::from($classificacao);
 
-
-        // Monta os dados do endereco num objeto
         $endereco = new Enderecos($cep, $logradouro, $bairro, $cidade, $estado);   
-        
-        // Monta os dados do evento num objeto (passando temporariamente null como endereçoId)
         $evento = new Eventos($titulo, $dataDoEvento, $horario, $classificacaoEnum, $telefone, null, $idGenero, $idUsuario, $nomeDaImagem, $descricao);
-
-
-        // Utils::dump($endereco);
-        // Utils::dump($evento);
-        // die();
 
         $eventoComEnderecoServico = new EventoComEnderecoServico();
         $eventoComEnderecoServico->cadastrarCompleto($evento, $endereco);
-        
 
         header("location:index.php");
         exit;
@@ -72,10 +60,6 @@ if (isset($_POST['inserir'])) {
         Utils::registrarErro($erro);
     }
 }
-
-
-
-
 ?>
 <!doctype html>
 <html lang="pt-br">
@@ -89,11 +73,11 @@ if (isset($_POST['inserir'])) {
   <link rel="stylesheet" href="css/estilo.css">
 </head>
 
-<body class="bg-ligth text-dark">
-    <header class="bg-ligth p-3">
+<body class="bg-light text-dark">
+    <header class="bg-light p-3">
     <div class="container d-flex justify-content-between align-items-center">
       <h1 class="m-0"><a href="index.php" class="text-light text-decoration-none"><img class="logotipo" src="images/logo2.png" alt="logo tipo"></a></h1>
-      <nav class="navbar navbar-expand-lg navbar-light bg-white">
+      <nav class="navbar navbar-expand-lg navbar-light bg-ligth">
         <div class="container">
           <button class="navbar-toggler" type="button" id="menuBtn" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -112,8 +96,8 @@ if (isset($_POST['inserir'])) {
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <?php foreach ($listaDeGeneros as $generos) { ?>
                     <li>
-                      <a class="dropdown-item" href="generos.php?tipo=<?= $generos['id'] ?>">
-                        <?= $generos['tipo'] ?>
+                      <a class="dropdown-item" href="generos.php?tipo=<?= htmlspecialchars($generos['id']) ?>">
+                        <?= htmlspecialchars($generos['tipo']) ?>
                       </a>
                     </li>
                   <?php } ?>
@@ -144,8 +128,15 @@ if (isset($_POST['inserir'])) {
     <hr>
   </header>
 
-    <main class="container my-5  bg-ligth text-dark rounded p-4 shadow">
+    <main class="container my-5 bg-light text-dark rounded p-4 shadow">
         <h2 class="mb-4 text-center">Inserir Evento</h2>
+
+        <!-- Exibe mensagem de erro, se houver -->
+        <?php if ($mensagemErro): ?>
+          <div class="alert alert-danger" role="alert">
+            <?= htmlspecialchars($mensagemErro) ?>
+          </div>
+        <?php endif; ?>
 
         <form autocomplete="off" action="" method="post" id="form-endereco" enctype="multipart/form-data">
 
@@ -168,8 +159,7 @@ if (isset($_POST['inserir'])) {
                 <label class="form-label" for="classificacao">Classificação indicativa</label>
                 <select class="form-select" name="classificacao" id="classificacao" required>
                     <option value="adulto">Adulto</option>
-                    <option value="infantil">infantil</option>
-
+                    <option value="infantil">Infantil</option>
                 </select>
             </div>
 
@@ -178,23 +168,19 @@ if (isset($_POST['inserir'])) {
                 <input class="form-control" type="tel" id="telefone" name="telefone" />
             </div>
 
-
             <div class="mb-3">
                 <label class="form-label" for="genero">Gêneros:</label>
                 <select class="form-select" name="genero" id="genero" required>
                     <option value=""></option>
 
                     <?php foreach ($listaDeGeneros as $generos) { ?>
-                        <option value="<?= $generos['id'] ?>">
-                            <?= $generos['tipo'] ?>
+                        <option value="<?= htmlspecialchars($generos['id']) ?>">
+                            <?= htmlspecialchars($generos['tipo']) ?>
                         </option>
                     <?php } ?>
 
                 </select>
             </div>
-
-
-
 
             <div class="mb-3">
                 <label class="form-label" for="descricao">Descrição:</label>
@@ -206,9 +192,8 @@ if (isset($_POST['inserir'])) {
                 <div id="area-do-cep">
                     <input maxlength="9" inputmode="numeric" placeholder="Somente números" type="text" id="cep"
                         name="cep" required> <br>
-                    <button id="buscar">Buscar</button>
+                    <button id="buscar" type="button">Buscar</button>
                 </div>
-                <!-- <textarea class="form-control" name="resumo" id="resumo" cols="50" rows="2" maxlength="300" placeholder="Endereço" required></textarea> -->
             </div>
             <div class="campos-restantes mb-3">
                 <label for="logradouro">Endereço:</label>
@@ -234,15 +219,13 @@ if (isset($_POST['inserir'])) {
 
             <div class="text-center">
                 <button class="btn btn-primary" id="inserir" name="inserir" type="submit">
-                    <i class="bi bi-save">Lançar evento</i>
+                    <i class="bi bi-save"></i> Lançar evento
                 </button>
             </div>
         </form>
-
-
-
     </main>
-<footer class="bg-ligth py-4">
+
+<footer class="bg-light py-4">
     <div class="container d-flex justify-content-center align-items-center flex-column">
       <h1 class="m-0">
         <a href="index.php" class="text-light text-decoration-none">

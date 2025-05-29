@@ -5,16 +5,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Explosão Cultural</title>
+    <meta name="description" content="Explosão Cultural - Plataforma de eventos culturais.">
     <link rel="shortcut icon" href="images/logotipo2.png" type="image/png" sizes="64x64">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 
-<body class="bg-ligth text-dark">
-    <header class="bg-ligth p-3">
+<body class="bg-light text-dark">
+    <header class="bg-light p-3">
         <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="m-0"><a href="index.php" class="text-light text-decoration-none"><img class="logotipo" src="images/logo2.png" alt="logo tipo"></a></h1>
-            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <h1 class="m-0">
+                <a href="index.php" class="text-light text-decoration-none">
+                    <img class="logotipo" src="images/logo2.png" alt="Logotipo do Explosão Cultural" loading="lazy">
+                </a>
+            </h1>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav" aria-controls="menuNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -62,29 +68,27 @@
         <hr>
     </header>
 
-
     <div class="row">
         <article class="col-12 bg-white rounded shadow my-1 py-4">
+            <h2 class="text-center">Atualizar meus dados</h2>
 
-            <h2 class="text-center">
-                Atualizar meus dados
-            </h2>
-
-            <div class="alert alert-danger text-center" role="alert">
-                [MENSAGEM_DE_ERRO]
-            </div>
+            <?php if (!empty($mensagemDeErro)) : ?>
+                <div class="alert alert-danger text-center" role="alert">
+                    <?= htmlspecialchars($mensagemDeErro) ?>
+                </div>
+            <?php endif; ?>
 
             <form class="mx-auto w-75" action="" method="post" id="form-atualizar" name="form-atualizar">
-                <input type="hidden" name="id" value="[ID_USUARIO]">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($usuario['id']) ?>">
 
                 <div class="mb-3">
                     <label class="form-label" for="nome">Nome:</label>
-                    <input value="[NOME_USUARIO]" class="form-control" type="text" id="nome" name="nome">
+                    <input value="<?= htmlspecialchars($usuario['nome']) ?>" class="form-control" type="text" id="nome" name="nome" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="email">E-mail:</label>
-                    <input value="[EMAIL_USUARIO]" class="form-control" type="email" id="email" name="email">
+                    <input value="<?= htmlspecialchars($usuario['email']) ?>" class="form-control" type="email" id="email" name="email" required>
                 </div>
 
                 <div class="mb-3">
@@ -92,57 +96,59 @@
                     <input class="form-control" type="password" id="senha" name="senha" placeholder="Preencha apenas se for alterar">
                 </div>
 
-                <button class="btn btn-primary" name="atualizar">
+                <button class="btn btn-primary" name="atualizar" aria-label="Atualizar dados">
                     <i class="bi bi-arrow-clockwise"></i> Atualizar
                 </button>
             </form>
-
         </article>
     </div>
 
-    <footer class="bg-ligth py-4">
-    <div class="container d-flex justify-content-center align-items-center flex-column">
-      <h1 class="m-0">
-        <a href="index.php" class="text-light text-decoration-none">
-          <img class="logotipo" src="images/logo2.png" alt="Logo do site">
-        </a>
-      </h1>
-
-      <ul class="nav">
-        <li class="nav-item">
-          <a class="nav-link text-black" href="index.php">Home</a>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-black" href="#" id="footerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Gêneros
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="footerDropdown">
-            <?php foreach ($listaDeGeneros as $generos) { ?>
-              <li>
-                <a class="dropdown-item" href="generos.php?tipo=<?= htmlspecialchars($generos['id']) ?>">
-                  <?= htmlspecialchars($generos['tipo']) ?>
+    <footer class="bg-light py-4">
+        <div class="container d-flex justify-content-center align-items-center flex-column">
+            <h1 class="m-0">
+                <a href="index.php" class="text-light text-decoration-none">
+                    <img class="logotipo" src="images/logo2.png" alt="Logotipo do Explosão Cultural" loading="lazy">
                 </a>
-              </li>
-            <?php } ?>
-          </ul>
-        </li>
+            </h1>
 
-        <li class="nav-item">
-          <a class="nav-link text-black" href="cria-conta.php">Cadastro</a>
-        </li>
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link text-black" href="index.php">Home</a>
+                </li>
 
-        <li class="nav-item">
-          <a class="nav-link text-black" href="login.php">Login</a>
-        </li>
-      </ul>
-    </div>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-black" href="#" id="footerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Gêneros
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="footerDropdown">
+                        <?php foreach ($listaDeGeneros as $generos) { ?>
+                            <li>
+                                <a class="dropdown-item" href="generos.php?tipo=<?= htmlspecialchars($generos['id']) ?>">
+                                    <?= htmlspecialchars($generos['tipo']) ?>
+                                </a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </li>
 
-    <p class="m-0 text-center">
-      Explosão Cultural — Empresa fictícia criada por Maycon e Lucas &copy;
-    </p>
-  </footer>
+                <li class="nav-item">
+                    <a class="nav-link text-black" href="cria-conta.php">Cadastro</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-black" href="login.php">Login</a>
+                </li>
+            </ul>
+        </div>
+
+        <p class="m-0 text-center">
+            Explosão Cultural — Empresa fictícia criada por Maycon e Lucas &copy;
+        </p>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/buscar.js"></script>
+    <script src="js/menu.js" defer></script>
+    <script src="js/buscar.js" defer></script>
 </body>
+
+</html>
